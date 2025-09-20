@@ -1,4 +1,4 @@
-name: Build QuickNote APK
+name: Build QuickNote APK with P4A
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
 
     - name: Install System Dependencies
       run: |
-        sudo apt-get update -y
+        sudo apt-get update
         sudo apt-get install -y \
           git \
           zip \
@@ -30,31 +30,43 @@ jobs:
           libtool \
           pkg-config \
           zlib1g-dev \
-          libncurses5-dev \
-          libtinfo5 \
-          libstdc++6
+          libncurses5-dev
 
-    - name: Install Python Build Dependencies
+    - name: Install Android SDK and Accept Licenses
+      uses: android-actions/setup-android@v2
+      with:
+        licenses: yes
+
+    - name: Install Python-for-Android
       run: |
-        python -m pip install --upgrade pip wheel setuptools virtualenv
-        pip install buildozer Cython==0.29.33
+        pip install cython
+        git clone https://github.com/kivy/python-for-android
+        cd python-for-android
+        pip install .
 
-    - name: Build APK with Buildozer
+    - name: Build APK with P4A
       run: |
         cd app
-        
-        # Set Android SDK root environment variable
-        export ANDROID_HOME=/usr/local/lib/android/sdk
-        
-        # Accept all Android SDK licenses with correct path
-        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses || true
-        
-        # Now run buildozer with the rock-solid versions
-        buildozer android debug
+        # Create a distribution and build the APK
+        p4a create \
+          --dist_name=quicknote \
+          --bootstrap=sdl2 \
+          --requirements=python3,kivy==2.1.0,kivymd==1.1.1 \
+          --arch=arm64-v8a \
+          --android-api=21 \
+          --private . \
+          --package=org.bigdev.quicknote \
+          --name="QuickNote" \
+          --version=1.0 \
+          --orientation=portrait \
+          --permission=WRITE_EXTERNAL_STORAGE \
+          --permission=READ_EXTERNAL_STORAGE
+
+        # The APK will be in the quicknote/dist/ directory
+        ls -la quicknote/dist/
 
     - name: Upload APK Artifact
-      if: success()
       uses: actions/upload-artifact@v4
       with:
         name: QuickNote-APK
-        path: app/bin/*.apk
+        path: app/quicknote/dist/*.apk
