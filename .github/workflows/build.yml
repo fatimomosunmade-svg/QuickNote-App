@@ -43,10 +43,13 @@ jobs:
       run: |
         cd app
         
-        # FIRST: Accept all Android SDK licenses automatically
-        yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses || true
+        # Set Android SDK root environment variable
+        export ANDROID_HOME=/usr/local/lib/android/sdk
         
-        # THEN: Run buildozer
+        # Accept all Android SDK licenses with correct path
+        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses || true
+        
+        # Now run buildozer with the rock-solid versions
         buildozer android debug
 
     - name: Upload APK Artifact

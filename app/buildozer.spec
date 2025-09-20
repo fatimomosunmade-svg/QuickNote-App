@@ -51,6 +51,7 @@ android.minapi = 21
 # (bool) If True, then skip trying to update the Android sdk
 android.skip_update = False
 
-# MAJOR FIX: Use a specific, older SDK tools version that is known to work
-android.sdk_tools_version = 26.1.1
-android.build_tools_version = 30.0.3
+# NUCLEAR FIX: Use proven, rock-solid versions that avoid license issues
+android.sdk_tools_version = 25.2.5
+android.build_tools_version = 29.0.3
+android.ndk_version = 19b
