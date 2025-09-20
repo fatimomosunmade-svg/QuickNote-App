@@ -25,11 +25,10 @@ jobs:
         pip install buildozer Cython==0.29.33
 
         # Navigate to the app directory and run buildozer
-        cd app
-        buildozer android debug
+        cd app && buildozer android debug
 
     - name: Upload APK Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: QuickNote-APK
         path: app/bin/*.apk
