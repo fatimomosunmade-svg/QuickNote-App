@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04 # Using a standard, stable Ubuntu version
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout code
@@ -25,13 +25,13 @@ jobs:
           git \
           zip \
           unzip \
-          openjdk-11-jdk \ # Using the widely available JDK 11
+          openjdk-11-jdk \
           autoconf \
           libtool \
           pkg-config \
           zlib1g-dev \
           libncurses5-dev \
-          libtinfo5 \ # This package name works on Ubuntu 22.04
+          libtinfo5 \
           libstdc++6
 
     - name: Install Python Build Dependencies
@@ -45,7 +45,7 @@ jobs:
         buildozer android debug
 
     - name: Upload APK Artifact
-      if: success() # Only upload if the build step was successful
+      if: success()
       uses: actions/upload-artifact@v4
       with:
         name: QuickNote-APK
