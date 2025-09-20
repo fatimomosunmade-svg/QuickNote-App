@@ -3,31 +3,49 @@ name: Build QuickNote APK
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # This allows you to manually trigger the build from the GitHub UI
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    container: python:3.9
+    runs-on: ubuntu-22.04 # Using a standard, stable Ubuntu version
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Build Android APK
-      run: |
-        # Install system dependencies
-        apt-get update
-        apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libtinfo5 libstdc++-12-dev
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
 
-        # Install Buildozer and Cython
-        pip install --upgrade pip wheel setuptools virtualenv
+    - name: Install System Dependencies
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y \
+          git \
+          zip \
+          unzip \
+          openjdk-11-jdk \ # Using the widely available JDK 11
+          autoconf \
+          libtool \
+          pkg-config \
+          zlib1g-dev \
+          libncurses5-dev \
+          libtinfo5 \ # This package name works on Ubuntu 22.04
+          libstdc++6
+
+    - name: Install Python Build Dependencies
+      run: |
+        python -m pip install --upgrade pip wheel setuptools virtualenv
         pip install buildozer Cython==0.29.33
 
-        # Navigate to the app directory and run buildozer
-        cd app && buildozer android debug
+    - name: Build APK with Buildozer
+      run: |
+        cd app
+        buildozer android debug
 
     - name: Upload APK Artifact
+      if: success() # Only upload if the build step was successful
       uses: actions/upload-artifact@v4
       with:
         name: QuickNote-APK
