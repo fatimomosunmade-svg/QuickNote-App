@@ -42,6 +42,11 @@ jobs:
     - name: Build APK with Buildozer
       run: |
         cd app
+        
+        # FIRST: Accept all Android SDK licenses automatically
+        yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses || true
+        
+        # THEN: Run buildozer
         buildozer android debug
 
     - name: Upload APK Artifact
