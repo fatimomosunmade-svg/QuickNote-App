@@ -25,7 +25,6 @@ source.include_exts = py,png,jpg,kv,atlas,json
 version = 1.0
 
 # (list) Application requirements
-# COMMAND: This is the most important line! It lists all the Python libraries we need.
 requirements = python3,kivy==2.1.0,kivymd==1.1.1,openssl,pyopenssl
 
 # (str) Icon of the application
@@ -50,6 +49,7 @@ android.minapi = 21
 #android.ndk = 23b
 
 # (bool) If True, then skip trying to update the Android sdk
-# This can be useful to avoid excess Internet downloads or save time
-# when an update is due and you just want to test/build the package.
 android.skip_update = False
+
+# Fix for the "Aidl not found" error
+android.build_tools_version = 34.0.0
